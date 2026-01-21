@@ -10,4 +10,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     boolean existsByUsername(String username);
 
     Optional<Account> findByUsername(String username);
+
+    boolean existsByRoleId(Long id);
 }

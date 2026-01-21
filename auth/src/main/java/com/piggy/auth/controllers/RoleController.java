@@ -1,6 +1,7 @@
 package com.piggy.auth.controllers;
 
-import com.piggy.auth.services.RoleService;
+import com.piggy.auth.models.Role;
+import com.piggy.auth.services.AppService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,21 +10,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/role")
 @RequiredArgsConstructor
 public class RoleController {
-    private final RoleService roleService;
+    private final AppService appService;
 
     @PostMapping("")
-    public ResponseEntity<Void> create(@RequestBody String name){
-        roleService.create(name);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Role> create(@RequestBody String name){
+        return ResponseEntity.ok(appService.createRole(name));
     }
     @PatchMapping("/{id}/add")
-    public ResponseEntity<Void> addPermission(@PathVariable Long id, @RequestBody Long permissionId){
-        roleService.addPermission(id, permissionId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Role> addPermission(@PathVariable Long id, @RequestBody Long permissionId){
+        return ResponseEntity.ok(appService.addPermissionToRole(id, permissionId));
     }
     @PatchMapping("/{id}/remove")
-    public ResponseEntity<Void> removePermission(@PathVariable Long id, @RequestBody Long permissionId){
-        roleService.removePermission(id, permissionId);
+    public ResponseEntity<Role> removePermission(@PathVariable Long id, @RequestBody Long permissionId){
+        return ResponseEntity.ok(appService.removePermissionFromRole(id, permissionId));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        appService.deleteRole(id);
         return ResponseEntity.noContent().build();
     }
 }

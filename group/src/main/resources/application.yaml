@@ -1,0 +1,25 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: group-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/group_db
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+web-url: http://localhost:3000

@@ -1,5 +1,6 @@
 package com.piggy.auth.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +23,8 @@ public class User {
     @Id
     private UUID id;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @Column(name = "name")
+    private String name;
 
     @Column(unique = true)
     private String email;
@@ -32,6 +33,7 @@ public class User {
     private String avatarUrl;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Account account;
 
     @CreationTimestamp

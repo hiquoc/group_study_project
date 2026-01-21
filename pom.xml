@@ -19,7 +19,7 @@
         <module>gateway</module>
         <module>eureka</module>
         <module>auth</module>
-        <module>chat</module>
+        <module>group</module>
     </modules>
 
     <dependencyManagement>

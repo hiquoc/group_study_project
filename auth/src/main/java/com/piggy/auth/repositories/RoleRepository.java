@@ -4,4 +4,5 @@ import com.piggy.auth.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<Role,Long> {
+    boolean existsByPermissions_Id(Long permissionId);
 }

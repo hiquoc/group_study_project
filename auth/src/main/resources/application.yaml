@@ -9,6 +9,10 @@ spring:
     password: 123456
     driver-class-name: org.postgresql.Driver
 
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
   jpa:
     hibernate:
       ddl-auto: update

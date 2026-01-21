@@ -13,10 +13,10 @@ spring:
             - Path=/auth/**
           filters:
             - name: JwtAuth
-#        - id: chat-service
-#          uri: lb://chat-service
-#          predicates:
-#            - Path=/chat/**
+        - id: group-service
+          uri: lb://group-service
+          predicates:
+            - Path=/group/**
 eureka:
   client:
     service-url:

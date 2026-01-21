@@ -15,28 +15,20 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RoleService {
     private final RoleRepository roleRepository;
-    private final PermissionService permissionService;
 
-    public void create(String name){
+    public Role create(String name){
         Role role=Role.builder().name(name).build();
-        roleRepository.save(role);
+        return roleRepository.save(role);
     }
-    @Transactional
-    public void addPermission(Long roleId,Long permissionId){
-        Role role=findById(roleId);
-        Permission permission=permissionService.findById(permissionId);
-        Set<Permission> permissionSet=role.getPermissions();
-        permissionSet.add(permission);
-    }
-    @Transactional
-    public void removePermission(Long roleId,Long permissionId){
-        Role role=findById(roleId);
-        Permission permission=permissionService.findById(permissionId);
-        Set<Permission> permissionSet=role.getPermissions();
-        permissionSet.remove(permission);
+    public void delete(Long roleId){
+        roleRepository.deleteById(roleId);
     }
 
     public Role findById(Long roleId){
         return roleRepository.findById(roleId).orElseThrow(()->new NotFoundException("Role not found"));
+    }
+
+    public boolean checkIfExistsByPermissionId(Long permissionId) {
+        return  roleRepository.existsByPermissions_Id(permissionId);
     }
 }
