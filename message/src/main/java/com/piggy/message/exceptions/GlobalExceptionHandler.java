@@ -2,7 +2,8 @@ package com.piggy.message.exceptions;
 
 
 import com.piggy.message.dtos.ApiError;
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 
-@RestControllerAdvice(basePackages = "com.piggy.group")
+@RestControllerAdvice(basePackages = "com.piggy.message")
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
@@ -45,8 +46,8 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiError> handleEntityNotFound(EntityNotFoundException ex) {
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<ApiError> handleNotFound(EmptyResultDataAccessException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ApiError(
                         HttpStatus.NOT_FOUND.value(),
@@ -56,6 +57,19 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<ApiError> handleDuplicate(DuplicateKeyException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                new ApiError(
+                        HttpStatus.CONFLICT.value(),
+                        "DUPLICATE_KEY",
+                        "Resource already exists",
+                        Instant.now()
+                )
+        );
+    }
+
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiError> handleUnknown(RuntimeException ex) {

@@ -79,7 +79,7 @@ public class AppService {
 
     //Inbox
     public List<UserConversationInbox> getRecentConversations(UUID userId, Instant cursorTimestamp,
-                                                              String cursorConversationId, int limit) {
+                                                              String cursorConversationId, Integer limit) {
         return userConversationInboxService.getRecentConversations(userId, cursorTimestamp, cursorConversationId, limit);
     }
 
@@ -130,8 +130,8 @@ public class AppService {
         conversationMemberService.removeAllConversationMember(conversation.getId());
     }
 
-    public void deletePrivateConversation(UUID user1Id, UUID user2Id) {
-        Conversation conversation = conversationService.findByMembersHash(user1Id, user2Id)
+    public void deletePrivateConversation(UUID requesterId, UUID userId) {
+        Conversation conversation = conversationService.findByMembersHash(requesterId, userId)
                 .orElseThrow(() -> new NotFoundException("Conversation not found"));
         conversationMemberService.removeAllConversationMember(conversation.getId());
         conversationService.deleteConversation(conversation.getId());

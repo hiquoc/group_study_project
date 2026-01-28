@@ -54,6 +54,9 @@ public class UserConversationInboxService {
                         .setOnInsert("conversationId", conversationId)
                         .set("lastMessageId", messageId)
                         .set("lastMessageTimestamp", now)
+                        .set("pinned", false)
+                        .set("muted", false)
+                        .set("archived", false)
         );
 
         // Receivers
@@ -68,7 +71,10 @@ public class UserConversationInboxService {
                             .setOnInsert("conversationId", conversationId)
                             .set("lastMessageId", messageId)
                             .set("lastMessageTimestamp", now)
+                            .set("pinned", false)
+                            .set("muted", false)
                             .inc("unreadCount", 1)
+                            .set("archived", false)
             );
         }
 
