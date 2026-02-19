@@ -9,5 +9,12 @@ import java.time.Instant;
 import java.util.List;
 
 public interface MessageRepository extends MongoRepository<Message, String> {
-    List<Message> findByConversationIdAndCreatedAtLessThan(String conversationId, Instant cursor, Pageable pageable);
+    List<Message> findByConversationIdOrderByCreatedAtDesc(
+            String conversationId,
+            Pageable pageable);
+
+    List<Message> findByConversationIdAndCreatedAtLessThanOrderByCreatedAtDesc(
+            String conversationId,
+            Instant cursor,
+            Pageable pageable);
 }

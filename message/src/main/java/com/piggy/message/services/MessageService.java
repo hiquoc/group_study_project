@@ -1,7 +1,9 @@
 package com.piggy.message.services;
 
+import com.piggy.message.dtos.responses.MessageResponse;
 import com.piggy.message.exceptions.NotFoundException;
 import com.piggy.message.models.Message;
+import com.piggy.message.models.UserCache;
 import com.piggy.message.repositories.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -11,18 +13,42 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
 
-    public List<Message> getMessages(String conversationId, Instant cursor, int limit) {
-        Pageable pageable = PageRequest.of(0, limit,
-                Sort.by(Sort.Direction.DESC, "createdAt"));
-        return messageRepository.findByConversationIdAndCreatedAtLessThan(conversationId,cursor,pageable);
+    public List<Message> getMessages(String conversationId,
+                                     Instant cursor,
+                                     int limit) {
+
+        Pageable pageable = PageRequest.of(
+                0,
+                limit,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        if (cursor == null || cursor.equals(Instant.EPOCH)) {
+            return messageRepository
+                    .findByConversationIdOrderByCreatedAtDesc(
+                            conversationId,
+                            pageable
+                    );
+        }
+
+        return messageRepository
+                .findByConversationIdAndCreatedAtLessThanOrderByCreatedAtDesc(
+                        conversationId,
+                        cursor,
+                        pageable
+                );
     }
+
     public Message getMessage(String messageId){
         return messageRepository.findById(messageId)
                 .orElseThrow(()-> new NotFoundException("Message not found"));
@@ -39,12 +65,16 @@ public class MessageService {
     public Message updateMessage(String messageId, String content){
         Message message=getMessage(messageId);
         message.setContent(content);
-//        messageRepository.save(message);
-        return message;
+
+        return messageRepository.save(message);
     }
     public void deleteMessage(String messageId){
         Message message=getMessage(messageId);
         message.setDeleted(true);
-//        messageRepository.save(message);
+        messageRepository.save(message);
     }
+    public List<Message> findAllById(Set<String> messageIds){
+        return messageRepository.findAllById(messageIds);
+    }
+
 }

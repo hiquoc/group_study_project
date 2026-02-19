@@ -22,6 +22,21 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    consumer:
+      group-id: auth-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
 jwt:
   secret: JpvyrD9cPfpPik/VUHYKrsICN+yjpUx5MieAP7U5/jPn7Tp8FhgBoWk6DFK1NtRwHuc75VE1gnPPMwq4ypYJ/w==
   access-token-expiration: 3600000     # 1 hour
@@ -38,5 +53,5 @@ logging:
   level:
     root: INFO
     org.springframework.web: DEBUG
-    com.netflix.discovery: WARN
+#    com.netflix.discovery: WARN
 

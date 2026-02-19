@@ -1,5 +1,6 @@
 package com.piggy.message.models;
 
+import com.piggy.message.enums.ConversationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,6 +40,9 @@ public class UserConversationInbox {
     @Field("conversation_id")
     private String conversationId;
 
+    @Field("conversation_type")
+    private ConversationType conversationType;
+
     @Field("last_message_id")
     private String lastMessageId;
 
@@ -56,4 +60,10 @@ public class UserConversationInbox {
 
     @Field("archived")
     private boolean archived = false;
+
+    @Field("display_name")
+    private String displayName;
+
+    @Field("display_avatar")
+    private String displayAvatar;
 }

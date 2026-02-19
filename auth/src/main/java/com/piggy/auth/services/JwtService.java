@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 @Component
 public class JwtService {
 
@@ -28,7 +30,7 @@ public class JwtService {
     public String generateAccessToken(UUID accountId, String role,UUID userId) {
         return Jwts.builder()
                 .setSubject(accountId.toString())
-                .claim("role", role)
+                .claim("role", role.replace("\"", ""))
                 .claim("userId",userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))

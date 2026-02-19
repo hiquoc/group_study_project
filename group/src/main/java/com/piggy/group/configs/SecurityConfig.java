@@ -23,8 +23,8 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests->requests
-                        .requestMatchers("/*").permitAll()
-                        .anyRequest().authenticated())
+//                        .requestMatchers("/*").permitAll()
+                        .anyRequest().permitAll())
                 .build();
     }
 }

@@ -24,8 +24,7 @@ public class SecurityConfig {
                 .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         (requests)->requests
-                        .requestMatchers("/auth/login",
-                                "/auth/register").permitAll()
+//                        .requestMatchers().permitAll()
                         .anyRequest().permitAll())
                 .build();
 

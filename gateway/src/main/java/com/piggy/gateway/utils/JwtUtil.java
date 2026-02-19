@@ -12,7 +12,7 @@ import java.security.Key;
 
 @Component
 public class JwtUtil {
-    @Value("${jwt.secrete}")
+    @Value("${jwt.secret}")
     private String secret;
 
     private Key getSigningKey(){
@@ -22,7 +22,7 @@ public class JwtUtil {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 }

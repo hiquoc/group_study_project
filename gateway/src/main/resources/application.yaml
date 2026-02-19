@@ -6,17 +6,41 @@ spring:
     name: gateway
   cloud:
     gateway:
-      routes:
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/auth/**
-          filters:
-            - name: JwtAuth
-        - id: group-service
-          uri: lb://group-service
-          predicates:
-            - Path=/group/**
+      server:
+        webflux:
+          routes:
+            # Public auth endpoints
+            - id: auth-public
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth/login,/auth/register
+              filters:
+                - StripPrefix=1
+
+            # Protected auth endpoints
+            - id: auth-protected
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth/**
+              filters:
+                - StripPrefix=1
+                - name: JwtAuth
+
+            - id: group-service
+              uri: lb://group-service
+              predicates:
+                - Path=/group/**
+              filters:
+                - StripPrefix=1
+                - name: JwtAuth
+
+            - id: message-service
+              uri: lb://message-service
+              predicates:
+                - Path=/message/**
+              filters:
+                - StripPrefix=1
+                - name: JwtAuth
 eureka:
   client:
     service-url:
@@ -27,6 +51,7 @@ logging:
     root: INFO
     org.springframework.cloud.gateway: DEBUG
     com.netflix.discovery: WARN
+    com.piggy.gateway.utils: DEBUG
 
 jwt:
   secret: JpvyrD9cPfpPik/VUHYKrsICN+yjpUx5MieAP7U5/jPn7Tp8FhgBoWk6DFK1NtRwHuc75VE1gnPPMwq4ypYJ/w==

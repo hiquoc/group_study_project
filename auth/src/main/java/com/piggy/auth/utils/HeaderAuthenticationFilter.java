@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 @Component
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
@@ -27,6 +29,11 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
+        if (!"true".equals(request.getHeader("X-Internal-Gateway"))) {
+            response.sendError(403, "Forbidden");
+            return;
+        }
 
         String userId = request.getHeader("X-User-Id");
         String role = request.getHeader("X-Role");

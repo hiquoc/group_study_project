@@ -1,6 +1,7 @@
 package com.piggy.message.utils;
 
 import com.piggy.message.dtos.AuthUser;
+import com.piggy.message.exceptions.ForbiddenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Component
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
@@ -27,6 +30,10 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        if (!"true".equals(request.getHeader("X-Internal-Gateway"))) {
+            response.sendError(403, "Forbidden");
+            return;
+        }
 
         String userId = request.getHeader("X-User-Id");
         String role = request.getHeader("X-Role");

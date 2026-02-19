@@ -20,8 +20,8 @@ public class SecurityConfigs {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(requests->
-                        requests.requestMatchers("/*").permitAll()
+                .authorizeHttpRequests(requests-> requests
+//                                .requestMatchers("/*").permitAll()
                                 .anyRequest().permitAll())
                 .build();
     }

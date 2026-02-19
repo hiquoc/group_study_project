@@ -28,6 +28,11 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
+        if (!"true".equals(request.getHeader("X-Internal-Gateway"))) {
+            response.sendError(403, "Forbidden");
+            return;
+        }
+
         String userId = request.getHeader("X-User-Id");
         String role = request.getHeader("X-Role");
 

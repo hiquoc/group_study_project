@@ -8,10 +8,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.List;
 
 @RestController
 @RequestMapping("/message")
@@ -29,4 +29,14 @@ public class MessageController {
         return ResponseEntity.ok(appService.sendGroupMessage(authUser.getUserId(),request.getContent(),
                 request.getConversationId()));
     }
+    @GetMapping("/{conversationId}")
+    public ResponseEntity<List<Message>> getMessages(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable("conversationId") String conversationId,
+            @RequestParam(value = "cursor", required = false) Instant cursor,
+            @RequestParam(value = "limit", required = false) Integer limit) {
+
+        return ResponseEntity.ok(appService.getMessages(authUser.getUserId(), conversationId, cursor, limit));
+    }
+
 }

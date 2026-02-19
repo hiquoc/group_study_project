@@ -23,4 +23,6 @@ public interface UserConversationInboxRepository extends MongoRepository<UserCon
     );
 
     Optional<UserConversationInbox> findByUserIdAndConversationId(UUID userId, String conversationId);
+
+    void deleteByUserIdAndConversationId(UUID userId, String conversationId);
 }

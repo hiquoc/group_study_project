@@ -2,6 +2,7 @@ package com.piggy.message.controllers;
 
 import com.piggy.message.dtos.AuthUser;
 import com.piggy.message.dtos.others.MembersData;
+import com.piggy.message.dtos.responses.UserConversationInboxResponse;
 import com.piggy.message.models.UserConversationInbox;
 import com.piggy.message.services.AppService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class UserConversationInboxController {
 
     //Lay danh sach doan chat gan nhat
     @GetMapping("")
-    public ResponseEntity<List<UserConversationInbox>>
+    public ResponseEntity<List<UserConversationInboxResponse>>
         getRecentConversations(@AuthenticationPrincipal AuthUser authUser,
                            @RequestParam(name = "cursorTimestamp", required = false) Instant cursorTimestamp,
                            @RequestParam(name = "cursorConversationId", required = false) String cursorConversationId,
