@@ -2,6 +2,7 @@ package com.piggy.message.controllers;
 
 import com.piggy.message.dtos.AuthUser;
 import com.piggy.message.dtos.requests.SendMessageRequest;
+import com.piggy.message.dtos.responses.MessageResponse;
 import com.piggy.message.models.Message;
 import com.piggy.message.services.AppService;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class MessageController {
                 request.getConversationId()));
     }
     @GetMapping("/{conversationId}")
-    public ResponseEntity<List<Message>> getMessages(
+    public ResponseEntity<List<MessageResponse>> getMessages(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable("conversationId") String conversationId,
             @RequestParam(value = "cursor", required = false) Instant cursor,

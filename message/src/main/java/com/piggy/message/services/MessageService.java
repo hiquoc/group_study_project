@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MessageService {
     private final MessageRepository messageRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public List<Message> getMessages(String conversationId,
                                      Instant cursor,

@@ -17,6 +17,7 @@ import com.piggy.message.models.UserCache;
 import com.piggy.message.models.UserConversationInbox;
 import com.piggy.message.services.others.UserServiceClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -35,41 +36,15 @@ public class AppService {
     private final OutboxEventService outboxEventService;
 
     private final UserServiceClient userServiceClient;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     //Message
     public List<MessageResponse> getMessages(UUID userId, String conversationId, Instant cursor, Integer limit) {
         conversationMemberService.checkIfUserBelongToConversation(conversationId, userId);
         List<Message> rawMessages = messageService.getMessages(conversationId, cursor, limit);
 
-        Set<UUID> userIds = rawMessages.stream().map(Message::getSenderId).collect(Collectors.toSet());
-        if (userIds.isEmpty()) {
-            return rawMessages.stream()
-                    .map(message -> {
-                        return MessageResponse.builder()
-                                .displayName(null)
-                                .displayAvatar(null)
-                                .content(message.getContent())
-                                .createdAt(message.getCreatedAt())
-                                .updatedAt(message.getUpdatedAt())
-                                .isDeleted(message.isDeleted())
-                                .build();
-                    })
-                    .toList();
-        }
-        Map<UUID, UserCache> userCacheMap = userCacheService.getUserCacheMap(userIds);
         return rawMessages.stream()
-                .map(message -> {
-                    UserCache userCache = userCacheMap.get(message.getSenderId());
-
-                    return MessageResponse.builder()
-                            .displayName(userCache != null ? userCache.getUsername() : null)
-                            .displayAvatar(userCache != null ? userCache.getAvatarUrl() : null)
-                            .content(message.getContent())
-                            .createdAt(message.getCreatedAt())
-                            .updatedAt(message.getUpdatedAt())
-                            .isDeleted(message.isDeleted())
-                            .build();
-                })
+                .map(MessageResponse::toResponse)
                 .toList();
 
     }
@@ -93,8 +68,6 @@ public class AppService {
             throw new BadRequestException("conversationId or receiverId is required");
         }
 
-        Message message = messageService.sendMessage(senderId, content, conversation.getId());
-
         UUID targetId = receiverId != null
                 ? receiverId
                 : conversationService.getOtherMemberId(conversation.getId(), senderId);
@@ -102,6 +75,20 @@ public class AppService {
         if (targetId == null) {
             throw new BadRequestException("Private conversation has no other member");
         }
+
+        Message message = messageService.sendMessage(senderId, content, conversation.getId());
+
+        MessageResponse messageResponse=MessageResponse.builder()
+                .displayName(null)
+                .displayAvatar(null)
+                .content(message.getContent())
+                .createdAt(message.getCreatedAt())
+                .updatedAt(message.getUpdatedAt())
+                .isDeleted(message.isDeleted())
+                .build();
+
+        simpMessagingTemplate.convertAndSendToUser(
+                String.valueOf(targetId),"/queue/messages",messageResponse);
 
         MessageSentEvent event = new MessageSentEvent(
                 message.getId(),
@@ -123,6 +110,10 @@ public class AppService {
 //                .orElseThrow(() -> new NotFoundException("Conversation not found"));
         conversationMemberService.checkIfUserBelongToConversation(conversationId, senderId);
         Message message = messageService.sendMessage(senderId, content, conversationId);
+
+
+        simpMessagingTemplate.convertAndSend(
+                "/topic/conversation/"+conversationId,MessageResponse.toResponse(message));
 
         MessageSentEvent event = new MessageSentEvent(
                 message.getId(),

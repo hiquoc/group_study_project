@@ -1,5 +1,6 @@
 package com.piggy.message.dtos.responses;
 
+import com.piggy.message.models.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,13 @@ public class MessageResponse {
     private Instant createdAt;
     private Instant updatedAt;
     private boolean isDeleted;
+
+    public static MessageResponse toResponse(Message message) {
+        return MessageResponse.builder()
+                .content(message.getContent())
+                .createdAt(message.getCreatedAt())
+                .updatedAt(message.getUpdatedAt())
+                .isDeleted(message.isDeleted())
+                .build();
+    }
 }
